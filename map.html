@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <h1>BRTS Bus Service</h1>
+      <h1>BRT Bus Service</h1>
       <nav>
         <ul>
           <li><a href="index.html">Home</a></li>
@@ -17,23 +17,24 @@
     </header>
 
     <main>
-      <section id="search">      
-        <h2>Search Your Route</h2>
+      <section id="search">
+        <h2>Search Your Bus</h2>
         <input
           type="text"
           id="route-search"
-          placeholder="Enter your starting point"
+          placeholder="Enter Bus Number ..."
         />
         <button onclick="searchRoute()">Search</button>
       </section>
 
       <section id="routes">
-        <iframe
-          src="https://maps.google.com/maps?q=LOCATION&output=embed"
-          frameborder="0"
-          width="800"
-          height="400"
-        ></iframe>
+        <h2>Map</h2>
+        <div class="map-container">
+          <iframe
+            src="https://maps.google.com/maps?q=LOCATION&output=embed"
+            allowfullscreen
+          ></iframe>
+        </div>
       </section>
     </main>
 
