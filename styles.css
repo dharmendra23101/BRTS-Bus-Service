@@ -69,33 +69,65 @@ main {
 }
 
 /* Search Section */
+/* Center the search section */
+/* Center and enhance the search section */
 #search {
-  text-align: center;
-  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: hsl(284, 33%, 98%);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 60%; /* Set a reasonable width for the search container */
+  margin: 30px auto; /* Center it horizontally */
 }
 
+/* Style the inputs to be stacked vertically with a gap */
 #search input {
   padding: 15px;
   font-size: 16px;
-  width: 65%;
-  margin-right: 10px;
+  width: 100%; /* Take up the full width of the container */
+  margin-bottom: 15px; /* Add space between inputs */
   border: 1px solid hsl(284, 33%, 66%);
-  border-radius: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  transition: box-shadow 0.3s ease, border 0.3s ease;
 }
 
+/* Add a focus effect for the input fields */
+#search input:focus {
+  border-color: hsl(284, 33%, 46%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+/* Style the button to match modern UI */
 #search button {
-  padding: 15px 30px;
-  font-size: 16px;
+  padding: 15px 0;
+  font-size: 18px;
   background-color: hsl(284, 33%, 46%);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%; /* Full width to align with the input fields */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Button hover effect */
 #search button:hover {
   background-color: hsl(284, 33%, 36%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Button active/click effect */
+#search button:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Routes Section */
