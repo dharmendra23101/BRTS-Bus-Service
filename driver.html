@@ -24,50 +24,78 @@
           id="route-search"
           placeholder="Enter Bus Number ..."
         />
-        <button onclick="saveLocation()">Share Location</button>
+        <button onclick="startSharing()">Share Location</button>
+        <button onclick="stopSharing()">Stop Sharing</button>
       </section>
     </main>
     <div id="status"></div>
-    <a href="https://dharmendra23101.github.io/location_test/location_display.html">watch</a>
 
     <footer>
-      <p>&copy; project by Mukund, Dharmendra and Ayush</p>
+      <p>&copy; project by Mukund, Dharmendra, and Ayush</p>
     </footer>
 
     <script>
-        async function saveLocation() {
-            const statusDiv = document.getElementById('status');
-            statusDiv.innerText = "Fetching location...";
+      let locationInterval;
 
-            if (!navigator.geolocation) {
-                statusDiv.innerText = "Geolocation is not supported by your browser.";
-                return;
-            }
+      async function saveLocation() {
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerText = "Fetching location...";
 
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                console.log(latitude)
-                console.log(longitude)
-                try {
-                    const response = await fetch('https://location-backend-aqvu.onrender.com/api/location', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ latitude, longitude })
-                    });
-                    const result = await response.json();
-                    statusDiv.innerHTML = `
-                        Location saved successfully!<br>
-                        <strong>Latitude:</strong> ${latitude}<br>
-                        <strong>Longitude:</strong> ${longitude}<br>
-                        <a href="location-display.html">View Saved Location</a>
-                    `;
-                } catch (error) {
-                    statusDiv.innerText = "Error saving location. Please try again.";
-                    console.error(error);
-                }
-            });
+        const busNumber = document.getElementById('route-search').value;
+        if (!busNumber) {
+          statusDiv.innerText = "Please enter a bus number.";
+          return;
         }
+
+        if (!navigator.geolocation) {
+          statusDiv.innerText = "Geolocation is not supported by your browser.";
+          return;
+        }
+
+        try {
+          // Delete previous location data for the bus number
+          await fetch(`https://location-backend-aqvu.onrender.com/api/location`, {
+            method: 'DELETE'
+          });
+
+          navigator.geolocation.getCurrentPosition(async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Save the new location data
+            const response = await fetch('https://location-backend-aqvu.onrender.com/api/location', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ latitude, longitude, busNumber })
+            });
+
+            const result = await response.json();
+            statusDiv.innerHTML = `
+              Location saved successfully!<br>
+              <strong>Bus Number:</strong> ${busNumber}<br>
+              <strong>Latitude:</strong> ${latitude}<br>
+              <strong>Longitude:</strong> ${longitude}<br>
+              <a href="location-display.html">View Saved Location</a>
+            `;
+          });
+        } catch (error) {
+          statusDiv.innerText = "Error clearing previous data or saving location. Please try again.";
+          console.error(error);
+        }
+      }
+
+      function startSharing() {
+        if (!locationInterval) {
+          locationInterval = setInterval(saveLocation, 5000); // Share location every 5 seconds
+          document.getElementById('status').innerText = "Started sharing location every 5 seconds.";
+        }
+      }
+
+      function stopSharing() {
+        clearInterval(locationInterval);
+        locationInterval = null;
+        document.getElementById('status').innerText = "Stopped sharing location.";
+      }
     </script>
   </body>
 </html>
