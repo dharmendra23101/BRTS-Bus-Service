@@ -27,21 +27,45 @@
         <button onclick="searchRoute()">Search</button>
       </section>
 
-      <section id="routes">
-        <h2>Map</h2>
-        <div class="map-container">
-          <iframe
-            src="https://maps.google.com/maps?q=LOCATION&output=embed"
-            allowfullscreen
-          ></iframe>
-        </div>
+      <section id="map" style="width: 100%; height: 250px; background-color: antiquewhite; text-align: center;">
+        <h1>Latest Saved Location</h1>
+        <div id="location-info">Loading...</div>
       </section>
     </main>
 
     <footer>
-      <p>&copy; project by Mukund, Dharmendra and Ayush</p>
+      <p>&copy; project by Mukund, Dharmendra, and Ayush</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        async function fetchLocation() {
+            const locationInfoDiv = document.getElementById('location-info');
+            try {
+                const response = await fetch('https://location-backend-aqvu.onrender.com/api/location');
+                if (!response.ok) throw new Error("Failed to retrieve location.");
+
+                const locationData = await response.json();
+                if (locationData) {
+                    locationInfoDiv.innerHTML = `
+                        <strong>Bus Number:</strong> ${locationData.busNumber || "N/A"}<br>
+                        <strong>Latitude:</strong> ${locationData.latitude}<br>
+                        <strong>Longitude:</strong> ${locationData.longitude}<br>
+                        <strong>Timestamp:</strong> ${new Date(locationData.timestamp).toLocaleString()}
+                    `;
+                } else {
+                    locationInfoDiv.innerText = "No location data available.";
+                }
+            } catch (error) {
+                locationInfoDiv.innerText = "Error loading location data. Please try again.";
+                console.error(error);
+            }
+        }
+
+        // Fetch location every 5 seconds
+        setInterval(fetchLocation, 3000);
+
+        // Initial fetch
+        fetchLocation();
+    </script>
   </body>
 </html>
