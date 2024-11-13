@@ -3,8 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>map</title>
+    <title>BRT Bus Service Map</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      #map {
+        width: 100%;
+        height: 400px;
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -27,9 +33,10 @@
         <button onclick="searchRoute()">Search</button>
       </section>
 
-      <section id="map" style="width: 100%; height: 250px; background-color: antiquewhite; text-align: center;">
+      <section>
         <h1>Latest Saved Location</h1>
         <div id="location-info">Loading...</div>
+        <div id="map"></div> <!-- Map container -->
       </section>
     </main>
 
@@ -37,35 +44,72 @@
       <p>&copy; project by Mukund, Dharmendra, and Ayush</p>
     </footer>
 
+    <!-- Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBc2xiUHb8z-JfuXTM6xpXjHoCM-r5jVIo"></script>
+    
     <script>
-        async function fetchLocation() {
-            const locationInfoDiv = document.getElementById('location-info');
-            try {
-                const response = await fetch('https://location-backend-aqvu.onrender.com/api/location');
-                if (!response.ok) throw new Error("Failed to retrieve location.");
+      let map, marker;
 
-                const locationData = await response.json();
-                if (locationData) {
-                    locationInfoDiv.innerHTML = `
-                        <strong>Bus Number:</strong> ${locationData.busNumber || "N/A"}<br>
-                        <strong>Latitude:</strong> ${locationData.latitude}<br>
-                        <strong>Longitude:</strong> ${locationData.longitude}<br>
-                        <strong>Timestamp:</strong> ${new Date(locationData.timestamp).toLocaleString()}
-                    `;
-                } else {
-                    locationInfoDiv.innerText = "No location data available.";
-                }
-            } catch (error) {
-                locationInfoDiv.innerText = "Error loading location data. Please try again.";
-                console.error(error);
-            }
-        }
+      // Initialize the map
+      function initMap() {
+        const initialLocation = { lat: 20.5937, lng: 78.9629 }; // Default location: India
 
-        // Fetch location every 5 seconds
-        setInterval(fetchLocation, 3000);
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: initialLocation,
+          zoom: 5,
+        });
 
-        // Initial fetch
-        fetchLocation();
+        // Set the custom bus emoji icon
+        const busIcon = {
+          url: 'https://cdn-icons-png.freepik.com/512/1719/1719609.png?ga=GA1.1.123110932.1726349583', // Bus emoji image URL
+          scaledSize: new google.maps.Size(40, 40), // Set the size of the emoji
+        };
+
+        // Initialize marker with the custom icon
+        marker = new google.maps.Marker({
+          position: initialLocation,
+          map: map,
+          icon: busIcon, // Using custom bus icon
+        });
+      }
+
+      async function fetchLocation() {
+  const locationInfoDiv = document.getElementById('location-info');
+  try {
+    const response = await fetch('https://location-backend-aqvu.onrender.com/api/location');
+    if (!response.ok) throw new Error("Failed to retrieve location.");
+
+    const locationData = await response.json();
+    if (locationData) {
+      const { latitude, longitude, busNumber, timestamp } = locationData;
+
+      locationInfoDiv.innerHTML = `
+        <strong>Bus Number:</strong> ${busNumber || "N/A"}<br>
+        <strong>Latitude:</strong> ${latitude}<br>
+        <strong>Longitude:</strong> ${longitude}<br>
+        <strong>Timestamp:</strong> ${new Date(timestamp).toLocaleString()}
+      `;
+
+      const newLocation = { lat: latitude, lng: longitude };
+      marker.setPosition(newLocation); // Update marker position
+      map.setCenter(newLocation); // Keep map centered on the new location
+      // Removed the map.setZoom() line to prevent zoom level change
+    } else {
+      locationInfoDiv.innerText = "No location data available.";
+    }
+  } catch (error) {
+    locationInfoDiv.innerText = "Error loading location data. Please try again.";
+    console.error(error);
+  }
+}
+
+
+      // Fetch location every 3 seconds
+      setInterval(fetchLocation, 5000);
+
+      // Initialize map and initial fetch
+      initMap();
+      fetchLocation();
     </script>
   </body>
 </html>
