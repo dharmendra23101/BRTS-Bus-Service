@@ -186,3 +186,60 @@ footer {
     font-size: 1.4rem;
   }
 }
+
+
+
+#bus_img {
+  width: 100%;
+  height: 70vh; /* Large, prominent image */
+  text-align: center;
+  position: relative;
+  background-image: url("https://cms.uitp.org/thumbor/fit-in/1920x/--/uploads/2024/10/pexels-daniel-andraski-197681005-12092974-scaled.jpg");
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-top: 20px;
+}
+
+#overlay-text {
+  position: absolute;
+  bottom: 20%; /* Adjust text position */
+  right: -100%; /* Start from off-screen */
+  color: rgb(255, 255, 255);
+  font-size: 2rem; /* Default font size */
+  font-weight: bold;
+  background-color: rgba(72, 72, 72, 0.6); /* Semi-transparent background */
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: left; /* Align text to the left */
+  animation: slideIn 1s ease forwards; /* Animation when text updates */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.3s ease;
+}
+
+/* Slide-in effect */
+@keyframes slideIn {
+  from {
+    right: -100%; /* Start outside the screen */
+    opacity: 0;
+  }
+  to {
+    right: 5%; /* Stop at a good position from the edge */
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  #overlay-text {
+    font-size: 1.5rem; /* Adjust font size for tablets */
+    bottom: 10%;
+  }
+}
+
+@media (max-width: 480px) {
+  #overlay-text {
+    font-size: 1.2rem; /* Adjust font size for mobile */
+    bottom: 5%;
+  }
+}
+
